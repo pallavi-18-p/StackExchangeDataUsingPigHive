@@ -1,0 +1,50 @@
+---HDFS:
+---Uploaded all the four datasets to gcp, created a directory on hdfs. Copied all the four files to ‘myData’ directory. Below are the commands
+
+hdfs dfs –mkdir /myData  
+hdfs dfs  –put FirstSet.csv SecondSet.csv ThirdSet.csv FourthSet.csv Extra.csv /myData
+
+---PIG
+---Step 1: All the four datasets were loaded to pig.
+
+dataset1 = LOAD '/mydata/FirstSet.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',', 'YES_MULTILINE') AS (Id: int,PostTypeId:int,AcceptedAnswerId:int,ParentId:int,CreationDate:Datetime,DeletionDate:Datetime,Score:int,ViewCount:int,Body:chararray,OwnerUserId:int,OwnerDisplayName:chararray,LastEditorUserId:int,LastEditorDisplayName:chararray,LastEditDate:Datetime,LastActivityDate:Datetime,Title:chararray,Tags:chararray,AnswerCount:int,CommentCount:int,FavoriteCount:int,ClosedDate:Datetime,CommunityOwnedDate:Datetime,ContentLicense:chararray); 
+
+dataset2 = LOAD '/mydata/SecondSet.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',' ,'YES_MULTILINE', 'WINDOWS','SKIP_INPUT_HEADER') AS(Id:int,PostTypeId:int,AcceptedAnswerId:int,ParentId:int,CreationDate:Datetime,DeletionDate:Datetime,Score:int,ViewCount:int,Body:chararray,OwnerUserId:int,OwnerDisplayName:chararray,LastEditorUserId:int,LastEditorDisplayName:chararray,LastEditDate:Datetime,LastActivityDate:Datetime,Title:chararray,Tags:chararray,AnswerCount:int,CommentCount:int,FavoriteCount:int,ClosedDate:Datetime,CommunityOwnedDate:Datetime,ContentLicense:chararray);
+
+dataset3 = LOAD '/mydata/ThirdSet.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',' ,'YES_MULTILINE', 'WINDOWS','SKIP_INPUT_HEADER')AS(Id:int,PostTypeId:int,AcceptedAnswerId:int,ParentId:int,CreationDate:Datetime,DeletionDate:Datetime,Score:int,ViewCount:int,Body:chararray,OwnerUserId:int,OwnerDisplayName:chararray,LastEditorUserId:int,LastEditorDisplayName:chararray,LastEditDate:Datetime,LastActivityDate:Datetime,Title:chararray,Tags:chararray,AnswerCount:int,CommentCount:int,FavoriteCount:int,ClosedDate:Datetime,CommunityOwnedDate:Datetime,ContentLicense:chararray);
+
+dataset4 = LOAD '/mydata/FourthSet.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',' ,'YES_MULTILINE', 'WINDOWS','SKIP_INPUT_HEADER')AS(Id:int,PostTypeId:int,AcceptedAnswerId:int,ParentId:int,CreationDate:Datetime,DeletionDate:Datetime,Score:int,ViewCount:int,Body:chararray,OwnerUserId:int,OwnerDisplayName:chararray,LastEditorUserId:int,LastEditorDisplayName:chararray,LastEditDate:Datetime,LastActivityDate:Datetime,Title:chararray,Tags:chararray,AnswerCount:int,CommentCount:int,FavoriteCount:int,ClosedDate:Datetime,CommunityOwnedDate:Datetime,ContentLicense:chararray);
+
+---Step 2: Merged the datasets into one single file.
+mergedDataset = UNION dataset1, dataset2,dataset3,dataset4;	
+
+---Step3: Removed all duplicate records.
+ noDuplicates = DISTINCT mergedDataset;
+
+---Step4: Removed all the records with blank OwnerUserId and Score.
+removenull  = FILTER noDuplicates BY (OwnerUserId IS NOT NULL) AND (Score IS NOT NULL);
+
+---Step5: Counted the number of records after cleaning(Optional)
+allRecords = GROUP removenull  ALL;
+numOfRecords = FOREACH allRecords GENERATE COUNT(removenull);
+dump numOfRecords;
+---numOfRecords = 194858
+---Step6: Removed all html tags, line breaks and commas.
+formattedcsv = FOREACH removenull GENERATE  Id AS Id, Score AS Score, REPLACE(Body,',*','') AS Body, OwnerUserId AS OwnerUserId, REPLACE(Title,',*','') AS Title, REPLACE(Tags,',*','') AS Tags; 
+
+cleanedData = FOREACH formattedcsv GENERATE Id AS Id, Score AS Score, REPLACE(Body,'<.+?>','') AS Body, OwnerUserId AS OwnerUserId, Title AS Title, Tags AS Tags;
+cleaned = FOREACH cleanedData GENERATE $0 as Id,$1 AS Score,REPLACE($2,'\\n|\\r|<br>','') AS Body,$3 AS Ownerid,$4 AS Title,$5 AS Tags;
+
+cleanedFinal = FOREACH cleaned GENERATE $0 AS Id,$1 AS Score, REPLACE($2,'([^a-zA-Z0-9]+)',' ') AS Body, $3 AS OwnerUserId, REPLACE($4,'([^a-zA-Z0-9]+)',' ')  AS Title, $5 AS Tags;
+
+
+---Step7: Stored the output to hdfs.
+
+STORE cleanedFinal INTO '/pigoutput' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',', 'YES_MULTILINE', 'WINDOWS');
+
+
+Note: cleaned relation has the valid data without losing its meaning. Whereas cleanedFinal has data with no special characters as this is used in Hive to calculate TFIDF of each term.
+
+
+
+
