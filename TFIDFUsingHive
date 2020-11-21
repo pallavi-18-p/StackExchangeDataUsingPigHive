@@ -24,5 +24,4 @@ create or replace view tfidf as select tf.ownerUserId,  tf.word, tfidf(tf.freq, 
 
 ---Step4: Query to fetch top ten tfidfs for all the top ten users.
 
-select ownerUserId, word,tfidf from (select ownerUserId, word,tfidf, row_number() over(partition by ownerUserId order by tfidf desc) as rn from tfidf as T) as T where T.rn <= 10;
 
