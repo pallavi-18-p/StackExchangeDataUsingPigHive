@@ -1,0 +1,20 @@
+CREATE EXTERNAL TABLE IF NOT EXISTS  posts(Id int, Score int, Body String, OwnerUserId Int, Title String, Tags String) ROW FORMAT DELIMITED FIELDS TERMINATED BY  ',' STORED AS TEXTFILE  LOCATION '/user/hiveposts';
+
+SHOW tables;
+
+DESCRIBE posts;
+
+SET hive.cli.print.header=true;
+
+LOAD DATA INPATH  '/pigoutput' OVERWRITE INTO TABLE posts;
+
+SELECT * FROM posts LIMIT 5;
+
+---Task1: The top 10 posts by score
+SELECT Id, Title,Score FROM posts ORDER BY Score DESC  LIMIT 10;
+
+---Task2: The top 10 users by post score
+SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
+
+---Task 3: The number of distinct users, who used the word “Hadoop” in one of their posts
+Select COUNT(DISTINCT OwnerUserId) from posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
