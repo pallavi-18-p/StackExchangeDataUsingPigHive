@@ -1,0 +1,28 @@
+--- Step1: Created a table to store the result of second query of the previous task.
+
+CREATE TABLE toptenusersposts AS SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
+
+
+
+---Step2: Extracted Body, Title and Tags from the table ‘tfidftoptenusers’ and formatted Body and Title column to remove all the unnecessary characters to calculate tfidf. Combined Body,Tags and Title into one column.
+
+CREATE TABLE tfidftoptenusers AS SELECT ownerUserId, Body FROM posts WHERE ownerUserId IN (SELECT ownerUserId FROM toptenusersposts) GROUP BY Body,ownerUserId;
+SELECT * FROM tfidftoptenusers LIMIT 5;
+
+---Step 3: TFIDF calculation
+
+add jar hivemall-core-0.4.2-rc.2-with-dependencies.jar;
+source define-all.hive;
+create temporary macro max2(x INT, y INT) if(x>y,x,y);
+create temporary macro tfidf(tf FLOAT, df_t INT, n_docs INT) tf * (log(10, CAST(n_docs as FLOAT)/max2(1,df_t)) + 1.0);
+create view exploded as select ownerUserId, word from tfidftoptenusers LATERAL VIEW explode(tokenize(Body, True)) t as word where not is_stopword(word);
+create view term_frequency as select ownerUserid, word, freq from (select ownerUserId, tf(word) as word2freq from exploded group by ownerUserId) t LATERAL VIEW explode(word2freq) t2 as word, freq;
+create or replace view document_frequency as select word, count(distinct ownerUserId) docs from exploded group by word;
+set hivevar:n_docs=10;
+create or replace view tfidf as select tf.ownerUserId,  tf.word, tfidf(tf.freq, df.docs, ${n_docs}) as tfidf from  term_frequency tf  JOIN document_frequency df ON (tf.word = df.word) order by tfidf desc;
+
+
+---Step4: Query to fetch top ten tfidfs for all the top ten users.
+
+select ownerUserId, word,tfidf from (select ownerUserId, word,tfidf, row_number() over(partition by ownerUserId order by tfidf desc) as rn from tfidf as T) as T where T.rn <= 10;
+
