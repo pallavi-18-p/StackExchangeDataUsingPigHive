@@ -7,7 +7,7 @@ DESCRIBE posts;
 
 SET hive.cli.print.header=true;
 
-LOAD DATA INPATH  '/pigoutput' OVERWRITE INTO TABLE posts;
+LOAD DATA INPATH  '/user/pig/pigoutput' OVERWRITE INTO TABLE posts;
 
 SELECT * FROM posts LIMIT 5;
 
