@@ -26,4 +26,8 @@ TFIDF is calculated on the Body column. The result of the second query in Task 3
 
 The entire process involved Pig and Hive only. It was all performed on GCP.
 
+References
+
 TFIDF was implemented by referring: https://github.com/harshalchaudhari35/StackExchange_DataProcessing/blob/master/code/pig_script.pig
+Hive: https://github.com/arunabellgutteramesh/PigHiveOnStackExchangeData/blob/master/code/Querying/hiveQueries.sql
+Stack Overflow: https://stackoverflow.com/
