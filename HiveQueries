@@ -1,3 +1,4 @@
+```
 CREATE EXTERNAL TABLE IF NOT EXISTS  posts(Id int, Score int, Body String, OwnerUserId Int, Title String, Tags String) ROW FORMAT DELIMITED FIELDS TERMINATED BY  ',' STORED AS TEXTFILE  LOCATION '/user/hiveposts';
 
 SHOW tables;
@@ -18,3 +19,4 @@ SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORD
 
 ---Task 3: The number of distinct users, who used the word “Hadoop” in one of their posts
 Select COUNT(DISTINCT OwnerUserId) from posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
+```
