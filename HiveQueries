@@ -18,7 +18,7 @@ SELECT Id, Title,Score FROM posts ORDER BY Score DESC  LIMIT 10;
 SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
 
 ---Task 3: The number of distinct users, who used the word “Hadoop” in one of their posts
-Select COUNT(DISTINCT OwnerUserId) from posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
+Select COUNT(DISTINCT OwnerUserId) FROM posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
 
 ---Task 4: The number of distinct users, who used the word “Hadoop” in one of their posts, this step counts all the occurences of the word by ignoring its case.
-Select COUNT(DISTINCT OwnerUserId) from posts where (LOWER(Body) LIKE '%hadoop%' OR LOWER(Title) LIKE '%hadoop%' OR LOWER(Tags) LIKE '%hadoop%');
+Select COUNT(DISTINCT OwnerUserId) FROM posts where (LOWER(Body) LIKE '%hadoop%' OR LOWER(Title) LIKE '%hadoop%' OR LOWER(Tags) LIKE '%hadoop%');
