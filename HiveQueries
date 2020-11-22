@@ -19,3 +19,6 @@ SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORD
 
 ---Task 3: The number of distinct users, who used the word “Hadoop” in one of their posts
 Select COUNT(DISTINCT OwnerUserId) from posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
+
+---Task 4: The number of distinct users, who used the word “Hadoop” in one of their posts, this step counts all the occurences of the word by ignoring its case.
+Select COUNT(DISTINCT OwnerUserId) from posts where (LOWER(Body) LIKE '%hadoop%' OR LOWER(Title) LIKE '%hadoop%' OR LOWER(Tags) LIKE '%hadoop%');
