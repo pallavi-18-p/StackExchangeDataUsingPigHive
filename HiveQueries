@@ -17,6 +17,7 @@ SELECT Id, Title,Score FROM posts ORDER BY Score DESC  LIMIT 10;
 ---Task2: The top 10 users by post score
 SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
 
+```javascript
 ---Task 3: The number of distinct users, who used the word “Hadoop” in one of their posts
 Select COUNT(DISTINCT OwnerUserId) from posts where (Body LIKE '%Hadoop%' OR Title LIKE '%Hadoop%' OR Tags LIKE '%Hadoop%');
 ```
