@@ -4,7 +4,7 @@ CREATE TABLE toptenusersposts AS SELECT OwnerUserId, SUM(Score) AS TotalScore FR
 
 
 
----Step2: Extracted Body, Title and Tags from the table ‘tfidftoptenusers’ and formatted Body and Title column to remove all the unnecessary characters to calculate tfidf. Combined Body,Tags and Title into one column.
+---Step2: Extracted Body column from the previously created table into another one for all the top ten users. 
 
 CREATE TABLE tfidftoptenusers AS SELECT ownerUserId, Body FROM posts WHERE ownerUserId IN (SELECT ownerUserId FROM toptenusersposts) GROUP BY Body,ownerUserId;
 SELECT * FROM tfidftoptenusers LIMIT 5;
