@@ -1,4 +1,4 @@
-```
+```javascript
 CREATE EXTERNAL TABLE IF NOT EXISTS  posts(Id int, Score int, Body String, OwnerUserId Int, Title String, Tags String) ROW FORMAT DELIMITED FIELDS TERMINATED BY  ',' STORED AS TEXTFILE  LOCATION '/user/hiveposts';
 
 SHOW tables;
