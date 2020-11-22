@@ -1,10 +1,10 @@
---- Step1: Created a table to store the result of second query of the previous task.
++--- Step1: Created a table to store the result of second query of the previous task.
 
-CREATE TABLE toptenusersposts AS SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
++CREATE TABLE toptenusersposts AS SELECT OwnerUserId, SUM(Score) AS TotalScore FROM posts GROUP BY OwnerUserId ORDER BY TotalScore DESC LIMIT 10;
 
++
 
-
----Step2: Extracted Body, Title and Tags from the table ‘tfidftoptenusers’ and formatted Body and Title column to remove all the unnecessary characters to calculate tfidf. Combined Body,Tags and Title into one column.
++---Step2: Extracted Body, Title and Tags from the table ‘tfidftoptenusers’ and formatted Body and Title column to remove all the unnecessary characters to calculate tfidf. Combined Body,Tags and Title into one column.
 
 CREATE TABLE tfidftoptenusers AS SELECT ownerUserId, Body FROM posts WHERE ownerUserId IN (SELECT ownerUserId FROM toptenusersposts) GROUP BY Body,ownerUserId;
 SELECT * FROM tfidftoptenusers LIMIT 5;
