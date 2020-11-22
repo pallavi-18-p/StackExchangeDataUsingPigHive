@@ -28,7 +28,7 @@ The entire process involved Pig and Hive only. It was all performed on GCP.
 
 References
 
-Stack Overflow: https://stackoverflow.com/
-TFIDF was implemented by referring: https://github.com/harshalchaudhari35/StackExchange_DataProcessing/blob/master/code/pig_script.pig
-Hive: https://github.com/arunabellgutteramesh/PigHiveOnStackExchangeData/blob/master/code/Querying/hiveQueries.sql
+1. Stack Overflow: https://stackoverflow.com/
+2. TFIDF was implemented by referring: https://github.com/harshalchaudhari35/StackExchange_DataProcessing/blob/master/code/pig_script.pig
+3. Hive: https://github.com/arunabellgutteramesh/PigHiveOnStackExchangeData/blob/master/code/Querying/hiveQueries.sql
 
