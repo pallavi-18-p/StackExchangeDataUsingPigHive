@@ -42,7 +42,7 @@ cleanedFinal = FOREACH cleaned GENERATE $0 AS Id,$1 AS Score, REPLACE($2,'([^a-z
 
 ---Step6: Stored the output to HDFS using STORE operator and CSVExcelStorage function.
 
-STORE cleanedFinal INTO '/pigoutput' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',', 'YES_MULTILINE', 'WINDOWS');
+STORE cleanedFinal INTO '/user/pig/pigoutput' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',', 'YES_MULTILINE', 'WINDOWS');
 
 
 Note: cleaned relation has the valid data without losing its meaning. Whereas cleanedFinal relation has data with no special characters as this is used in Hive to calculate TFIDF of each term.
